@@ -79,18 +79,24 @@ app.post('/new', (req, res) =>{
 })
 
 app.put('/complete/:id', (req, res) =>{
-    let id = sanitizeString(req.params['id'])
-    db.collection('toDo').updateOne({'_id':ObjectID(id)},
+    let id = req.params['id']
+    if(typeof id === 'string') {
+        id = sanitizeString(req.params['id'])
+        db.collection('toDo').updateOne({'_id':ObjectID(id)},
         {$set : {'completed' : 'true'}},
-        (err,results)=> res.json(results)
-    )
+            (err,results)=> res.json(results)
+        )
+    } else res.json({'error' : 'type error'})
 })
 
 app.put('/delete/:id', (req, res) =>{
-    let id = sanitizeString(req.params['id'])
-    db.collection('toDo').deleteOne({ '_id':ObjectID(id)},
-        (err,results)=> res.json({results})
-    )
+    let id = req.params['id']
+    if(typeof id === 'string') {
+        id = sanitizeString(req.params['id'])
+        db.collection('toDo').deleteOne({ '_id':ObjectID(id)},
+            (err,results)=> res.json({results})
+        )
+    } else res.json({'error' : 'type error'})
 })
 
 app.listen(3000, () => console.log('Mongo app listening on port 3000'))
