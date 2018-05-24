@@ -78,6 +78,29 @@ app.post('/new', (req, res) =>{
     }
 })
 
+app.put('/edit/:id', (req,res) => {
+    let date = req.body.date
+    let todo = req.body.todo
+    let id = req.params['id']
+    if(isValidDate(req.body.date) && req.body.date!=null && req.body.date!=undefined) {
+        if(todo!=null && todo!= undefined && todo!="") {
+            todo = sanitizeString(req.body.todo)
+            data = {'todo' : todo, 'date': date, 'completed' : false}
+            db.collection('toDo').updateOne({'_id':ObjectID(id)},
+                {$set : data},
+                (err,results)=> res.json(results)
+            )
+        } else {
+            res.json({'error': 'todo is not valid'})
+        }
+    } else {
+        res.json({'error':'date is not valid'})
+    }
+})
+
+
+
+
 app.put('/complete/:id', (req, res) =>{
     let id = req.params['id']
     if(typeof id === 'string') {
